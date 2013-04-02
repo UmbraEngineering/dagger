@@ -1,0 +1,12 @@
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Sublime project files
+*.sublime-*
+
+# Node modules
+node_modules
