@@ -16,5 +16,11 @@
     "socket"
   ],
   "author": "James Brumond",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "classes": "~0.3.0",
+    "express": "~3.1.1",
+    "socket.io": "~0.9.14",
+    "eventemitter2": "~0.4.11"
+  }
 }
