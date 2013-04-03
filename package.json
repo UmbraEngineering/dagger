@@ -1,5 +1,5 @@
 {
-  "name": "dagger",
+  "name": "dagger.js",
   "version": "0.0.0",
   "description": "A Node.js API server framework with Socket.IO support",
   "main": "lib/index.js",
