@@ -25,7 +25,8 @@
     "node-conf": "~0.0.5",
     "redis-url": "~0.1.0",
     "wrench": "~1.4.4",
-    "sechash": "~0.2.1",
+    "uuid-v4": "~0.1.0",
+    "oath": "~0.2.3",
     "merge-recursive": "0.0.3"
   }
 }
