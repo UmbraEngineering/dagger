@@ -53,6 +53,8 @@ app.models.require('comments');
 var Post = app.models.create('posts', {
 	
 	schema: {
+		title: String,
+		body: String,
 		created: Date,
 		updated: Date,
 		author: {type: ObjectId, ref: 'users'},
