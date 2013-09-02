@@ -20,17 +20,11 @@ Your API server application should have the following basic structure:
 
 ```
 project
-|
 +--config
-|  |
 |  +--master.js
-|  |
 |  +--development.js
-|  |
 |  \--production.js
-|
 +--models
-|
 \--routes
 ```
 
