@@ -1,6 +1,6 @@
 # dagger
 
-A Node.js API server framework with Socket.IO support
+A Node.js RESTful API server framework with Socket.IO support
 
 The sister project of [cloak](https://github.com/UmbraEngineering/cloak).
 
