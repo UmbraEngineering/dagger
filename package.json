@@ -27,7 +27,7 @@
     "uuid-v4": "~0.1.0",
     "oath": "~0.2.3",
     "merge-recursive": "0.0.3",
-    "mongoose": "~3.0.0",
+    "mongoose": "~3.6.0",
     "mongoose-types": "~1.0.3",
     "async": "0.2.9",
     "yes-no": "0.0.1"
