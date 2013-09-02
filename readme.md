@@ -12,7 +12,9 @@ $ npm install dagger.js
 
 ## Usage
 
-Dagger is designed so that you can get straight to building your app with very little difficulty and setup.
+Dagger is designed so that you can get straight to building your app with very little difficulty and setup. It is built on top of tested and well supported technologies such as [Express](http://expressjs.com/), [Socket.io](http://socket.io/), and [MongoDB](http://www.mongodb.org/).
+
+_Full documentation will be done when the first alpha release is ready_
 
 ### Start Building
 
@@ -30,4 +32,32 @@ project
 
 The `config` directory contains a master config file with all of your default configuration, and another config file with overrides for each environment you plan to use. The `models` directory contains your models, which are used to automatically build the API endpoints. The `routes` directory is optional, and can contain "resources" which allow you to build custom endpoints not directly tied to a model.
 
+### Models
 
+Models are designed using a beefed up [mongoose](http://mongoosejs.com/) system. A basic model in Dagger looks something like this:
+
+###### ./models/posts.js
+
+```javascript
+var app = require('dagger.js').app;
+
+var ObjectId = app.models.types.ObjectId;
+
+// We use these in the schema below, so load them
+app.models.require('users');
+app.models.require('comments');
+
+//
+// Define our posts model.
+//
+var Post = app.models.create('posts', {
+	
+	schema: {
+		created: Date,
+		updated: Date,
+		author: {type: ObjectId, ref: 'users'},
+		comments: [{type: ObjectId, red: 'comments'}]
+	}
+
+});
+```
