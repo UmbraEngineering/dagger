@@ -80,3 +80,18 @@ var Post = app.models.create('posts', {
 
 });
 ```
+
+With just that, you have RESTful endpoints defined for all of the basic CRUD operations, plus a little extra:
+
+```
+GET /posts
+GET /posts/:postid
+HEAD /posts
+HEAD /posts/:postid
+POST /posts
+PUT /posts/:postid
+PATCH /posts/:postid
+DELETE /posts/:postid
+OPTIONS /posts
+GET /posts/schema
+```
