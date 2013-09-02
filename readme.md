@@ -59,6 +59,23 @@ var Post = app.models.create('posts', {
 		updated: Date,
 		author: {type: ObjectId, ref: 'users'},
 		comments: [{type: ObjectId, red: 'comments'}]
+	},
+
+	hooks: {
+		// When we change the title or body, set the updated date
+		'pre::save': function(next) {
+			if (this.isModified('title') || this.isModified('body')) {
+				this.updated = Date.now();
+			}
+			next();
+		},
+
+		// When we create a new Post, set the created/updated dates
+		'pre::create': function(next) {
+			this.created = Date.now();
+			this.updated = Date.now();
+			next();
+		}
 	}
 
 });
