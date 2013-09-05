@@ -41,6 +41,12 @@ Starting up the project is easy. Your start.js file should look something like t
 require('dagger.js').initialize(__dirname);
 ```
 
+You then start the server with a command like this:
+
+```javascript
+NODE_ENV=development node start.js
+```
+
 ### Models
 
 Models are designed using a beefed up [mongoose](http://mongoosejs.com/) system. A basic model in Dagger looks something like this:
