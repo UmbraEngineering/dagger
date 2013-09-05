@@ -44,7 +44,7 @@ require('dagger.js').initialize(__dirname);
 You then start the server with a command like this:
 
 ```bash
-NODE_ENV=development node start.js
+$ NODE_ENV=development node start.js
 ```
 
 ### Models
