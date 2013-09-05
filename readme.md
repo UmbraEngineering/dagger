@@ -67,7 +67,7 @@ var Post = app.models.create('posts', {
 		created: Date,
 		updated: Date,
 		author: {type: ObjectId, ref: 'users'},
-		comments: [{type: ObjectId, red: 'comments'}]
+		comments: [{type: ObjectId, ref: 'comments'}]
 	},
 
 	hooks: {
