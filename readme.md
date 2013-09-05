@@ -61,6 +61,7 @@ app.models.require('comments');
 //
 var Post = app.models.create('posts', {
 	
+	// This is a mongoose schema with some extra features supported
 	schema: {
 		title: String,
 		body: String,
