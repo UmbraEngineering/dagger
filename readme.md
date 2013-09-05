@@ -28,9 +28,18 @@ project
 |  +--production.js
 +--models
 +--routes
++--start.js
 ```
 
 The `config` directory contains a master config file with all of your default configuration, and another config file with overrides for each environment you plan to use. The `models` directory contains your models, which are used to automatically build the API endpoints. The `routes` directory is optional, and can contain "resources" which allow you to build custom endpoints not directly tied to a model.
+
+Starting up the project is easy. Your start.js file should look something like this:
+
+###### ./start.js
+
+```javascript
+require('dagger.js').initialize(__dirname);
+```
 
 ### Models
 
