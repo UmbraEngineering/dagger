@@ -111,3 +111,14 @@ DELETE /posts/:postid
 OPTIONS /posts
 GET /posts/schema
 ```
+
+Coming in the next version, this will also automatically define endpoints for subresources, like this:
+
+```
+GET /posts/:postid/author
+GET /posts/:postid/comments
+GET /posts/:postid/comments/:commentid
+
+etc...
+```
+
