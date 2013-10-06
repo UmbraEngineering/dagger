@@ -112,7 +112,7 @@ OPTIONS /posts
 GET /posts/schema
 ```
 
-Coming in the next version, this will also automatically define endpoints for subresources, like this:
+It also defines sub-resource routes, like the following:
 
 ```
 GET /posts/:postid/author
@@ -121,8 +121,3 @@ GET /posts/:postid/comments/:commentid
 
 etc...
 ```
-
-## TODO
-
-There is a needed [pull request](https://github.com/senchalabs/connect/pull/907) for connect that has to be pulled in before this will be completely stable.
-
