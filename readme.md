@@ -79,7 +79,7 @@ var Post = app.models.create('posts', {
 
 	hooks: {
 		// When we change the title or body, set the updated date
-		'pre::save': function(next) {
+		'before::save': function(next) {
 			if (this.isModified('title') || this.isModified('body')) {
 				this.updated = Date.now();
 			}
@@ -87,7 +87,7 @@ var Post = app.models.create('posts', {
 		},
 
 		// When we create a new Post, set the created/updated dates
-		'pre::create': function(next) {
+		'before::create': function(next) {
 			this.created = Date.now();
 			this.updated = Date.now();
 			next();
