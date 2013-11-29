@@ -1,35 +1,18 @@
 {
   "name": "dagger.js",
-  "version": "0.1.0",
-  "description": "A Node.js API server framework with Socket.IO support",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/UmbraEngineering/dagger.git"
-  },
-  "keywords": [
-    "framework",
-    "api",
-    "socket"
-  ],
-  "author": "James Brumond",
+  "repository": "https://github.com/UmbraEngineering/dagger",
+  "author": "James Brumond <james@jbrumond.me> (http://www.jbrumond.me)",
   "license": "MIT",
   "dependencies": {
-    "express": "~3.1.1",
-    "socket.io": "~0.9.14",
-    "eventemitter2": "~0.4.11",
-    "node-conf": "~0.0.5",
-    "redis-url": "~0.1.0",
-    "wrench": "~1.4.4",
-    "uuid-v4": "~0.1.0",
-    "oath": "~0.2.3",
     "merge-recursive": "0.0.3",
-    "mongoose": "~3.6.0",
-    "mongoose-types": "~1.0.3",
-    "async": "0.2.9",
-    "yes-no": "0.0.1"
+    "wrench": "~1.5.4",
+    "express": "~3.4.4",
+    "oath": "~0.2.3"
   }
 }
