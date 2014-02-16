@@ -17,6 +17,7 @@
     "when": "~2.6.0",
     "mime": "~1.2.11",
     "mongoose": "~3.8.1",
-    "logic-gates": "0.0.1"
+    "logic-gates": "0.0.1",
+    "redis-url": "~0.2.0"
   }
 }
