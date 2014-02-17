@@ -4,8 +4,6 @@ var conf          = require('./conf');
 var Class         = require('./class');
 var EventEmitter  = require('eventemitter2').EventEmitter2;
 
-var nextId = 1;
-
 // 
 // AppObject class
 // 
@@ -14,9 +12,6 @@ var AppObject = module.exports = Class.extend({
 	init: function() {
 		// Inherit from EventEmitter
 		EventEmitter.call(this, conf.ee2);
-
-		// Every AppObject should have its own unique identifier
-		this._uuid = nextId++;
 	},
 
 	// 

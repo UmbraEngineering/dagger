@@ -9,7 +9,7 @@ exports.allowedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTI
 // The same list of allowed methods as above, except these have been
 // normallized into function names
 // 
-exports.methodFuncs = ['get', 'head', 'post', 'put', 'patch', 'del', 'options'];
+exports.methodFuncs = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options'];
 
 // 
 // A list of the standardly supportted HTTP status codes and their names
@@ -118,7 +118,7 @@ var HttpError = exports.HttpError = function(status, message) {
 	this.description = exports.statusCodes[status];
 };
 
-HttpError.prototype = new Error();
+require('util').inherits(HttpError, Error);
 
 HttpError.prototype.toJSON = function() {
 	return {
