@@ -1,23 +1,9 @@
 
 var conf      = require('./conf');
-var socketio  = require('socket.io');
+var express   = require('express');
 var httpMeta  = require('./http-meta');
-var Request   = require('./request/socket');
+var Request   = require('./request/http');
 var models    = require('./models');
-
-// Borrow the route class from express for parsing urls for
-// socket.io requests in a compatable way
-var ExpressRoute = require(
-	path.join(app.PATH.MODULES.EXPRESS, 'lib/router/route')
-);
-
-// 
-// We store active routes here
-// 
-var routes = httpMeta.methodFuncs.reduce(function(mem, method) {
-	mem[method] = [ ];
-	return mem;
-}, { });
 
 // 
 // Listens on the given HTTP(S) server for socket requests
@@ -65,7 +51,6 @@ exports.onRequest = function(socket, req, callback) {
 		function(err) {
 			// Send any middleware errors to the client
 			if (err) {
-				if (err === true) {return;}
 				err = new HttpError(err);
 				return err.send(req);
 			}
@@ -130,3 +115,4 @@ httpMeta.methodFuncs.forEach(function(method) {
 		});
 	};
 });
+

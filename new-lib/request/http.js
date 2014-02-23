@@ -15,6 +15,7 @@ var HttpRequest = module.exports = Request.extend({
 		this.query            = req.query;
 		this.params           = req.params;
 		this.requestHeaders   = req.headers || [ ];
+		this.method           = req.method.toUpperCase();
 	},
 
 	setHeader: function(header, value) {

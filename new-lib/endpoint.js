@@ -34,6 +34,10 @@ var Endpoint = module.exports = AppObject.extend({
 		});
 
 		return result;
+	},
+
+	bindRoute: function(route) {
+		// 
 	}
 
 });

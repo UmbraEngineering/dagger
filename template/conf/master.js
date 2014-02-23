@@ -15,17 +15,13 @@ module.exports = {
 	// 
 	http: {
 		// If disabled, the server acts as a socket-only server, and all non-socket
-		// related requests will fail with a 501 Not Implemented error.
+		// related requests will fail with a 501 Not Implemented error. The rest of
+		// the http config is still request as an http server handles socket requests
+		// as well
 		enabled: true,
 
 		port: 8000,
-		address: '0.0.0.0',
-		ssl: {
-			enabled: false,
-			keyFile: './ssl/key',
-			certFile: './ssl/cert',
-			caFile: './ssl/ca'
-		}
+		address: '0.0.0.0'
 	},
 
 	// 
@@ -37,6 +33,17 @@ module.exports = {
 		// Should socket-based push listeners be allowed
 		enablePushSupport: true
 	},
+
+	// 
+	// SSL configuration
+	// 
+	ssl: {
+		enabled: false,
+
+		keyFile: './ssl/key',
+		certFile: './ssl/cert',
+		caFile: './ssl/ca'
+	}
 	
 	// 
 	// Redis is used in dagger as a pub-sub event bus for communicating certain events
@@ -54,6 +61,13 @@ module.exports = {
 	// 
 	mongodb: {
 		url: 'mongodb://localhost'
+	},
+
+	// 
+	// Config for the auth middleware
+	// 
+	auth: {
+		keyFile: 'jws/key.pem'
 	}
 
 };

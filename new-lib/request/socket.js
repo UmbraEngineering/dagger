@@ -16,6 +16,7 @@ var SocketRequest = module.exports = Request.extend({
 		this.pathname         = parsedUrl.pathname;
 		this.query            = parsedUrl.query;
 		this.callback         = callback;
+		this.method           = req.method.toUpperCase();
 		this.requestHeaders   = req.headers || [ ];
 		this.responseHeaders  = {
 			'content-type': 'application/json'
@@ -33,13 +34,20 @@ var SocketRequest = module.exports = Request.extend({
 	// Send a response
 	// 
 	respond: function(status, body) {
+		return this.sendResponse(status, this.getResponseHeaders(), body);
+	},
+
+	// 
+	// Actually responds, calling the callback
+	// 
+	sendResponse: function(status, headers, body) {
 		this.callback({
 			status: status,
 			message: httpMeta.statusCodes[status],
-			headers: this.getResponseHeaders(),
+			headers: headers,
 			body: body
 		});
-	},
+	};
 
 	// 
 	// Get a formatted array of response headers

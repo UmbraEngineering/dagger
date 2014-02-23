@@ -129,5 +129,5 @@ HttpError.prototype.toJSON = function() {
 };
 
 HttpError.prototype.send = function(req) {
-	req.send(this.status, this.toJSON());
+	req.respond(this.status, this.toJSON());
 };
