@@ -14,7 +14,7 @@ var PersonSchema = exports.schema = new models.Schema({
 		type: String,
 		enum: ['Male', 'Female', 'Other', 'Undisclosed']
 	},
-	children: [{ type: models.types.ObjectId, ref: 'Person' }]
+	children: [{ type: models.types.ObjectId, ref: 'person' }]
 });
 
 // 

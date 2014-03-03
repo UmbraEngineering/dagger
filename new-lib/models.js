@@ -98,9 +98,42 @@ exports.create = function(name, schema) {
 	// Add the schema description method, but only if one was not already defined
 	if (! schema.static.schemaDescription) {
 		schema.statics.schemaDescription = function() {
-			// 
-			// TODO
-			// 
+			var result = { };
+
+			Object.keys(schema.paths).forEach(function(key) {
+				var path = schema.paths[key];
+				var desc = result[key] = { };
+				
+				if (path.instance) {
+					desc.type = path.instance;
+				} else {
+					var type = path.options.type;
+					var isArray = Array.isArray(type);
+					
+					if (isArray) {
+						type = type[0];
+					}
+
+					type = type.toString();
+					type = type.slice(9, type.indexOf('('));
+
+					if (isArray) {
+						type = '[' + type + ']'
+					}
+
+					desc.type = type;
+				}
+
+				Object.keys(path.options).forEach(function(opt) {
+					if (opt === 'type') {return;}
+
+					desc[opt] = path.options[opt];
+					if (desc[opt] == null) {
+						desc[opt] = (desc[opt] === null) ? 'null' : 'undefined';
+					}
+					desc[opt] = desc[opt].toString();
+				});
+			});
 		};
 	}
 
@@ -111,6 +144,16 @@ exports.create = function(name, schema) {
 			// TODO
 			// 
 		};
+	}
+
+	// Add the serialize method, but only if one was not already defined
+	if (! schema.statics.serialize) {
+		schema.statics.serialize = function(obj) {
+			if (obj.toObject) {
+				obj = obj.toObject();
+			}
+			return obj;
+		}
 	}
 
 	return mongoose.model(name, schema);
