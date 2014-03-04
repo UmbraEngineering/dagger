@@ -28,7 +28,7 @@ module.exports = {
 	// Web socket configuration
 	// 
 	ws: {
-		enabled: true,
+		enabled: false,
 
 		// Should socket-based push listeners be allowed
 		enablePushSupport: true
@@ -43,7 +43,7 @@ module.exports = {
 		keyFile: './ssl/key',
 		certFile: './ssl/cert',
 		caFile: './ssl/ca'
-	}
+	},
 	
 	// 
 	// Redis is used in dagger as a pub-sub event bus for communicating certain events

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-  	"dagger.js": "latest"
+    "dagger.js": "latest",
+    "jsjws": "~0.5.0"
   }
 }

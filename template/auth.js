@@ -3,6 +3,7 @@ var fs      = require('fs');
 var jws     = require('jsjws');
 var dagger  = require('dagger.js');
 
+var conf       = dagger.require('conf');
 var paths      = dagger.require('paths');
 var HttpError  = dagger.require('http-meta');
 

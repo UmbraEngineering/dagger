@@ -1,8 +1,8 @@
 
-var util          = require('util');
-var conf          = require('./conf');
 var Class         = require('./class');
 var EventEmitter  = require('eventemitter2').EventEmitter2;
+
+var nextId = 1;
 
 // 
 // AppObject class
@@ -12,6 +12,9 @@ var AppObject = module.exports = Class.extend({
 	init: function() {
 		// Inherit from EventEmitter
 		EventEmitter.call(this, conf.ee2);
+
+		// Every AppObject should have its own unique identifier
+		this._uuid = nextId++;
 	},
 
 	// 
@@ -30,8 +33,10 @@ var AppObject = module.exports = Class.extend({
 	// method for emit
 	// 
 	emits: function() {
-		var args = [this].concat(Array.prototype.slice.call(arguments));
-		return this.emit.bind.apply(this.emit, args);
+		var args = _.toArray(arguments);
+		args.unshift(this);
+		args.unshift(this.emit);
+		return _.bind.apply(_, args);
 	},
 
 	// 
@@ -56,5 +61,31 @@ var AppObject = module.exports = Class.extend({
 
 });
 
+// 
+// Determine if this class inherits from another
+// 
+AppObject.inherits = function(constructor) {
+	// Short-circuit these obvious cases as it makes things easier
+	if (constructor === EventEmitter || constructor === Class || constructor === Object) {return true;}
+
+	// Otherwise, work up the scope until we reach {constructor} or {Object}
+	var scope = this.prototype.constructor;
+	while (true) {
+		if (scope === constructor) {return true;}
+		if (scope === Object) {return false;}
+		scope = scope.prototype.constructor;
+	}
+
+	return false;
+};
+
+// 
+// Define an onExtend that adds basic statics
+// 
+AppObject.onExtend = function() {
+	this.onExtend = AppObject.onExtend;
+	this.inherits = AppObject.inherits;
+};
+
 // Inherit the EventEmitter prototype
-util.inherits(AppObject, EventEmitter);
+merge(AppObject.prototype, EventEmitter.prototype);

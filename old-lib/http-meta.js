@@ -9,7 +9,7 @@ exports.allowedMethods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTI
 // The same list of allowed methods as above, except these have been
 // normallized into function names
 // 
-exports.methodFuncs = ['get', 'head', 'post', 'put', 'patch', 'delete', 'options'];
+exports.methodFuncs = ['get', 'head', 'post', 'put', 'patch', 'del', 'options'];
 
 // 
 // A list of the standardly supportted HTTP status codes and their names
@@ -101,18 +101,9 @@ var HttpError = exports.HttpError = function(status, message) {
 
 	// If we were given an error object
 	else if (message instanceof Error) {
-		if (message.name === 'ValidationError') {
-			this.message = message.errors;
-			this.status = 400;
-			this.description = exports.statusCodes[400];
-		} else {
-			Error.call(this, message.message);
-			this.message = message.message;
-			this.stack = message.stack || message.stacktrace || getStackTrace();
-			this.name = 'HttpError';
-			this.status = status;
-			this.description = exports.statusCodes[status];
-		}
+		Error.call(this, message.message);
+		this.message = message.message;
+		this.stack = message.stack || message.stacktrace || getStackTrace();
 	}
 
 	// If we were just given a string message
@@ -120,13 +111,14 @@ var HttpError = exports.HttpError = function(status, message) {
 		Error.call(this, message);
 		this.message = message;
 		this.stack = getStackTrace();
-		this.name = 'HttpError';
-		this.status = status;
-		this.description = exports.statusCodes[status];
 	}
+
+	this.name = 'HttpError';
+	this.status = status;
+	this.description = exports.statusCodes[status];
 };
 
-require('util').inherits(HttpError, Error);
+HttpError.prototype = new Error();
 
 HttpError.prototype.toJSON = function() {
 	return {
@@ -137,13 +129,5 @@ HttpError.prototype.toJSON = function() {
 };
 
 HttpError.prototype.send = function(req) {
-	req.respond(this.status, this.toJSON());
+	req.send(this.status, this.toJSON());
 };
-
-function getStackTrace() {
-	try {
-		throw new Error();
-	} catch (err) {
-		return err.stack || err.stacktrace;
-	}
-}
