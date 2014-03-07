@@ -1,8 +1,9 @@
 
-var dagger    = require('dagger.js');
-var Endpoint  = dagger.require('endpoint');
-var models    = dagger.require('models');
-var Person    = models.require('person').model;
+var dagger     = require('dagger.js');
+var models     = dagger.require('models');
+var Endpoint   = dagger.require('endpoint');
+var HttpError  = dagger.require('http-meta').HttpError;
+var Person     = models.require('person').model;
 
 var PeopleEndpoint = module.exports = new Endpoint({
 
@@ -34,7 +35,7 @@ var PeopleEndpoint = module.exports = new Endpoint({
 	// GET /people/:id
 	// 
 	"get /:id": function(req) {
-		Person.findById(req.params.id)
+		Person.findById(req.params.id).exec()
 			.then(
 				function(person) {
 					if (! person) {
@@ -44,6 +45,11 @@ var PeopleEndpoint = module.exports = new Endpoint({
 					req.send(200, Person.serialize(person));
 				},
 				function(err) {
+					// This means that the param ID was not a valid ObjectId
+					if (err.name === 'CastError' || err.path === '_id') {
+						return (new HttpError(404, 'Document not found')).send(req);
+					}
+
 					(new HttpError(err)).send(req);
 				}
 			);

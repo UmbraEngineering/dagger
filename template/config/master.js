@@ -7,7 +7,12 @@ module.exports = {
 	logging: {
 		level: ['MESSAGE', 'WARNING', 'ERROR', 'CRITICAL'],
 		timestamps: true,
-		colorOutput: true
+		colorOutput: true,
+		requests: {
+			enabled: true,
+			body: true,
+			headers: true
+		}
 	},
 
 	// 
@@ -20,7 +25,7 @@ module.exports = {
 		// as well
 		enabled: true,
 
-		port: 8000,
+		port: 3000,
 		address: '0.0.0.0'
 	},
 
@@ -68,6 +73,13 @@ module.exports = {
 	// 
 	auth: {
 		keyFile: 'jws/key.pem'
+	},
+
+	// 
+	// Config for response formatting and contents
+	// 
+	output: {
+		errorStacks: true
 	}
 
 };

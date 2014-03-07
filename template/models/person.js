@@ -8,7 +8,7 @@ var models = require('dagger.js').require('models');
 // as that is handled automatically by dagger's model module.
 // 
 var PersonSchema = module.exports = new models.Schema({
-	name: { type: String, required: true, index: {unique: true} },
+	name: { type: String, required: true },
 	email: { type: String, required: true, index: {unique: true} },
 	gender: {
 		type: String,
