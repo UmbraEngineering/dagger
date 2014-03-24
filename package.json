@@ -1,7 +1,7 @@
 {
   "name": "dagger.js",
   "version": "0.0.0",
-  "description": "ERROR: No README.md file found!",
+  "description": "Dagger.js application server framework",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,7 +17,6 @@
     "when": "~2.6.0",
     "mime": "~1.2.11",
     "mongoose": "~3.8.1",
-    "logic-gates": "0.0.1",
     "redis-url": "~0.2.0",
     "async": "^0.2.10",
     "socket.io": "~0.9.16",
