@@ -20,6 +20,7 @@
     "redis-url": "~0.2.0",
     "async": "^0.2.10",
     "socket.io": "~0.9.16",
-    "eventemitter2": "~0.4.13"
+    "eventemitter2": "~0.4.13",
+    "redis": "^0.10.1"
   }
 }
