@@ -1,6 +1,6 @@
 {
   "name": "dagger.js",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Dagger.js application server framework",
   "main": "lib/index.js",
   "scripts": {
