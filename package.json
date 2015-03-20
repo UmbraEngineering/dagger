@@ -1,6 +1,6 @@
 {
   "name": "dagger.js",
-  "version": "1.0.32",
+  "version": "2.0.0",
   "description": "Dagger.js application server framework",
   "main": "lib/index.js",
   "scripts": {
@@ -10,16 +10,17 @@
   "author": "James Brumond <james@jbrumond.me> (http://www.jbrumond.me)",
   "license": "MIT",
   "dependencies": {
-    "merge-recursive": "0.0.3",
-    "wrench": "~1.5.4",
+    "async": "^0.2.10",
+    "eventemitter2": "~0.4.13",
     "express": "~3.4.4",
-    "node-conf": "0.0.6",
-    "when": "~2.6.0",
+    "merge-recursive": "0.0.3",
     "mime": "~1.2.11",
     "mongoose": "~3.8.1",
-    "async": "^0.2.10",
+    "node-conf": "0.0.6",
+    "promise-es6": "^0.1.0",
+    "redis": "^0.10.1",
+    "route-parser": "0.0.3",
     "socket.io": "~0.9.16",
-    "eventemitter2": "~0.4.13",
-    "redis": "^0.10.1"
+    "wrench": "~1.5.4"
   }
 }
