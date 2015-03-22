@@ -38,3 +38,52 @@ dagger.endpoint('/people', {
 
 })
 
+
+
+
+
+
+var people = module.exports = dagger.endpoint('/people');
+
+people.get('/:id', function(req) {
+	// 
+});
+
+people.post(function(req) {
+	// 
+});
+
+people.put('/:id', function(req) {
+	// 
+});
+
+people.delete('/:id', function(req) {
+	// 
+});
+
+
+
+
+dagger.endpoint('/people')
+	.on('put|patch /:id', function(req) {
+		// 
+	})
+	.get('/:id', function(req) {
+		// 
+	})
+	.post(function(req) {
+		// 
+	})
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -11,7 +11,12 @@ var Router = module.exports = Class.extend({
 	},
 
 	// 
+	// Add a new route handler on to the stack
 	// 
+	// @param {method} a pipe "|" delimited list of http methods
+	// @param {route} the uri route pattern
+	// @param {func} the handler function
+	// @return void
 	// 
 	push: function(method, route, func) {
 		method = method.toLowerCase().split('|');
@@ -19,7 +24,10 @@ var Router = module.exports = Class.extend({
 	},
 
 	// 
+	// Find the correct function to handle the given request
 	// 
+	// @param {req} the request object
+	// @return function
 	// 
 	find: function(req) {
 		for (var i = 0; i < this.routes.length; i++) {
@@ -36,7 +44,9 @@ var Router = module.exports = Class.extend({
 	},
 
 	// 
+	// Returns a middleware function that will pass requests through this router
 	// 
+	// @return function
 	// 
 	middleware: function() {
 		var self = this;
@@ -51,8 +61,10 @@ var Router = module.exports = Class.extend({
 
 				var promise = func(req);
 				if (promise) {
-					// 
+					return promise.then(resolve, reject);
 				}
+
+				resolve();
 			});
 		};
 	}

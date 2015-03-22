@@ -1,8 +1,4 @@
 
-var conf     = require('./conf');
-var utils    = require('./utils');
-var Request  = require('./request');
-
 // 
 // A list of the allowed HTTP methods; anything else will be rejected
 // with a 501 Not Implemented error
