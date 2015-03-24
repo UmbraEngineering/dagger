@@ -2,7 +2,18 @@
 var dagger   = require('dagger.js');
 var People   = require('./models/people');
 
-dagger(require('./config'), {
+dagger({
+
+	bootstrap: [
+		require('./src/bootstrap/init-the-thing'),
+		require('./src/bootstrap/init-the-other-thing')
+	],
+
+	postInit: function() {
+		this.socketServer.io.adapter(socketioRedis({
+			// 
+		}));
+	},
 
 	middleware: function() {
 		this.use(someAuthModule);
@@ -36,7 +47,20 @@ dagger.endpoint('/people', {
 		People.create()
 	}
 
-})
+});
+
+
+
+
+
+
+Person.auth(dagger.model.auth.Basic);
+
+people.get(Person.crud('read'));
+
+people.get('/:id', Person.crud('read', 'id'));
+
+people.post(Person.crud('create'));
 
 
 
@@ -81,7 +105,25 @@ dagger.endpoint('/people')
 
 
 
-
+{
+	http: {
+		port: 8000,
+		address: '0.0.0.0'
+	},
+	ssl: {
+		enabled: false,
+		ca: null,
+		caFile: null,
+		key: null,
+		keyFile: null,
+		cert: null,
+		certFile: null
+	},
+	ws: {
+		enabled: true,
+		enableListeners: true
+	}
+}
 
 
 

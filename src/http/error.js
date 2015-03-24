@@ -114,7 +114,7 @@ HttpError.prototype.toJSON = function() {
 // @return void
 // 
 HttpError.prototype.send = function(req) {
-	req.respond(this.status, {message: this.description}, this.toJSON());
+	req.send(this.status, {message: this.description}, this.toJSON());
 };
 
 function getStackTrace(opts) {
