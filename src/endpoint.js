@@ -22,7 +22,6 @@ var Endpoint = module.exports = Class.extend({
 		if (routes) {
 			Object.keys(routes).forEach(function(key) {
 				var route = parseRoute(key);
-
 				self._initRoute(route.methods, route.pathname, routes[key]);
 			});
 		}
@@ -38,6 +37,11 @@ var Endpoint = module.exports = Class.extend({
 	// 
 	_initRoute: function(methods, route, func) {
 		var router = dagger.app._router;
+
+		if (typeof route === 'function') {
+			func = route; route = '';
+		}
+
 		router.push(methods, this.baseUrl + route, func);
 	},
 
@@ -133,7 +137,7 @@ function parseRoute(route) {
 	route = route.split(' ');
 				
 	return {
-		methods: (route.length > 1) ? route[0] : '',
-		pathname: (route.length > 1) ? route[1] : route[0]
+		methods: route[0],
+		pathname: route[1] || ''
 	};
 }

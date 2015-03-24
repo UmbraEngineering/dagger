@@ -1,8 +1,10 @@
 
 var url       = require('url');
 var Request   = require('./index');
+var dagger    = require('../index');
 var httpMeta  = require('../http/meta');
 var qs        = require('querystring');
+var merge     = require('merge-recursive');
 var Promise   = require('promise-es6').Promise;
 
 var HttpRequest = module.exports = Request.extend({
@@ -15,7 +17,7 @@ var HttpRequest = module.exports = Request.extend({
 		this._req = req;
 		this._res = res;
 
-		this.protocol         = req.protocol;
+		this.protocol         = isHttps() ? 'https' : 'http';
 		this.url              = url.parse(req.url, true);
 		this.pathname         = this.url.pathname;
 		this.query            = this.url.query;
@@ -106,3 +108,9 @@ var HttpRequest = module.exports = Request.extend({
 	}
 
 });
+
+// -------------------------------------------------------------
+
+function isHttps() {
+	return dagger.app.httpServer.isHttps;
+}

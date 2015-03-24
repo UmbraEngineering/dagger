@@ -1,5 +1,6 @@
 
-var httpMeta = require('./meta');
+var httpMeta  = require('./meta');
+var conf      = require('../config');
 
 // Used to parse dupe key errors
 var dupeKeyError = /duplicate key error index: (.+) dup key/;
@@ -95,9 +96,9 @@ HttpError.prototype.name = 'HttpError';
 // @return object
 // 
 HttpError.prototype.toJSON = function() {
-	var result = { message: this.message };
+	var result = { error: this.message };
 
-	if (conf.output.errorStacks) {
+	if (conf.output && conf.output.errorStacks) {
 		result.stack = this.stack ? getStackTrace({
 			stack: this.stack,
 			split: true
@@ -117,6 +118,9 @@ HttpError.prototype.send = function(req) {
 	req.send(this.status, {message: this.description}, this.toJSON());
 };
 
+// 
+// Get a stack trace
+// 
 function getStackTrace(opts) {
 	opts = opts || { };
 

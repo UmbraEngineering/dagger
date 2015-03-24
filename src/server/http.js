@@ -14,6 +14,7 @@ var Server = module.exports = Class.extend({
 
 	init: function() {
 		this.server = null;
+		this.isHttps = null;
 	},
 
 	// -------------------------------------------------------------
@@ -37,6 +38,7 @@ var Server = module.exports = Class.extend({
 	// @return void
 	// 
 	createHttpServer: function() {
+		this.isHttps = false;
 		this.server = http.createServer(this.handleRequest.bind(this));
 		this.server.listen(conf.http.port, conf.http.address, function() {
 			winston.info('HTTP server listening on ' + conf.http.address + ':' + conf.http.port + '...');
@@ -67,6 +69,7 @@ var Server = module.exports = Class.extend({
 			opts.pfx = conf.ssl.pfx || readConfFile(conf.ssl.pfxFile);
 		}
 
+		this.isHttps = true;
 		this.server = https.createServer(opts, this.handleRequest.bind(this));
 		this.server.listen(conf.http.port, conf.http.address, function() {
 			winston.info('HTTPS server listening on ' + conf.http.address + ':' + conf.http.port + '...');

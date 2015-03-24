@@ -1,9 +1,10 @@
 
-var App       = require('./app');
-var Endpoint  = require('./endpoint');
-
 // 
 // The method which creates and starts up the app server
+// 
+// This has to run before the `require` calls to make sure that
+// `module.exports` has been correctly replace *before* those modules
+// try to load it themselves.
 // 
 // @param {options} additional options
 // @return object
@@ -11,6 +12,12 @@ var Endpoint  = require('./endpoint');
 exports = module.exports = function(options) {
 	return exports.app = new App(options);
 };
+
+// 
+// Load dependencies
+// 
+var App       = require('./app');
+var Endpoint  = require('./endpoint');
 
 // 
 // Expose the endpoint class/method

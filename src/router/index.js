@@ -33,7 +33,7 @@ var Router = module.exports = Class.extend({
 		for (var i = 0; i < this.routes.length; i++) {
 			var route = this.routes[i];
 
-			if (route.methods.indexOf(req.method) >= 0) {
+			if (route.methods.indexOf(req.method.toLowerCase()) >= 0) {
 				var params = route.match(req.pathname);
 				if (params) {
 					req.params = params;
