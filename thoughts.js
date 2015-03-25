@@ -2,6 +2,9 @@
 var dagger   = require('dagger.js');
 var People   = require('./models/people');
 
+
+
+
 dagger({
 
 	bootstrap: [
@@ -22,83 +25,30 @@ dagger({
 
 });
 
+
+
+
+dagger.models.require('user');
+dagger.models.require('person');
+
+
+
+
+
+var Person = dagger.models.require('person').model;
+
 // 
 // Create the /people endpoint
 // 
 dagger.endpoint('/people', {
-
-	// 
-	// GET /people/:id
-	// 
-	'get /:id': function(req) {
-		People.findById(req.params.id, function(err, person) {
-			if (err) {
-				return req.error(404, 'Could not find person with ID "' + req.params.id + '"');
-			}
-
-			req.send(200, person.serialize());
-		});
-	},
-
-	// 
-	// 
-	// 
-	'post': function(req) {
-		People.create()
-	}
-
+	'get':             Person.crud('read'),
+	'get /:id':        Person.crud('read', 'id'),
+	'post':            Person.crud('create'),
+	'put|patch':       Person.crud('update'),
+	'put|patch /:id':  Person.crud('update', 'id'),
+	'delete':          Person.crud('delete'),
+	'delete /:id':     Person.crud('delete', 'id')
 });
-
-
-
-
-
-
-Person.auth(dagger.model.auth.Basic);
-
-people.get(Person.crud('read'));
-
-people.get('/:id', Person.crud('read', 'id'));
-
-people.post(Person.crud('create'));
-
-
-
-
-
-
-var people = module.exports = dagger.endpoint('/people');
-
-people.get('/:id', function(req) {
-	// 
-});
-
-people.post(function(req) {
-	// 
-});
-
-people.put('/:id', function(req) {
-	// 
-});
-
-people.delete('/:id', function(req) {
-	// 
-});
-
-
-
-
-dagger.endpoint('/people')
-	.on('put|patch /:id', function(req) {
-		// 
-	})
-	.get('/:id', function(req) {
-		// 
-	})
-	.post(function(req) {
-		// 
-	})
-
 
 
 
