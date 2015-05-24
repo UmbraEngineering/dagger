@@ -1,9 +1,11 @@
 
-var Class       = require('./class');
-var Router      = require('./router');
-var conf        = require('./config');
-var HttpServer  = require('./server/http');
-var isThenable  = require('promise-es6/lib/utils').thenable;
+var Class         = require('./class');
+var paths         = require('./paths');
+var Router        = require('./router');
+var conf          = require('./config');
+var HttpServer    = require('./server/http');
+var SocketServer  = require('./server/socket');
+var requireDir    = require('require-dir');
 
 var App = module.exports = Class.extend({
 
@@ -11,8 +13,6 @@ var App = module.exports = Class.extend({
 	// @param {options} more complex config, like middleware functions
 	// 
 	init: function(options) {
-		var self = this;
-
 		this.options = options || { };
 
 		// Create the router
@@ -21,6 +21,10 @@ var App = module.exports = Class.extend({
 
 		// This array holds the middleware stack that is called for every request
 		this.middleware = [ ];
+	},
+
+	setup: function() {
+		var self = this;
 
 		// Call any bootstrappers
 		if (this.options.bootstrap) {
@@ -28,7 +32,7 @@ var App = module.exports = Class.extend({
 				this.options.bootstrap = [ this.options.bootstrap ];
 			}
 			this.options.bootstrap.forEach(function(func) {
-				func.call(this);
+				func.call(self);
 			});
 		}
 
@@ -49,8 +53,11 @@ var App = module.exports = Class.extend({
 		// Start up socket.io
 		if (conf.ws && conf.ws.enabled) {
 			this.socketServer = new SocketServer();
-			this.socketServer.bindToServer(this.httpServer.server);
+			this.socketServer.createServer(this.httpServer.server);
 		}
+
+		// Load in the endpoints
+		this.loadEndpoints();
 
 		// Call any postInits
 		if (this.options.postInit) {
@@ -58,7 +65,7 @@ var App = module.exports = Class.extend({
 				this.options.postInit = [ this.options.postInit ];
 			}
 			this.options.postInit.forEach(function(func) {
-				func.call(this);
+				func.call(self);
 			});
 		}
 	},
@@ -89,6 +96,15 @@ var App = module.exports = Class.extend({
 				return task(req);
 			});
 		}, null);
+	},
+
+	// 
+	// Loads endpoints into the server
+	// 
+	// @return void
+	// 
+	loadEndpoints: function() {
+		requireDir(paths.endpoints, {recurive: true});
 	}
 
 });

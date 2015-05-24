@@ -12,13 +12,15 @@
   "dependencies": {
     "merge-recursive": "0.0.x",
     "mime": "1.2.x",
-    "mongoose": "3.8.x",
+    "mongoose": "4.0.x",
     "node-conf": "0.0.x",
     "promise-es6": "0.1.x",
+    "promise-extensions": "0.2.x",
     "redis": "0.10.x",
+    "require-dir": "0.3.x",
     "route-parser": "0.0.x",
     "socket.io": "1.3.x",
-    "winston": "^0.9.0",
+    "winston": "0.9.x",
     "wrench": "1.5.x"
   }
 }

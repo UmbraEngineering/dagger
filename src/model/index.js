@@ -4,6 +4,8 @@ var paths      = require('../paths');
 var conf       = require('../config');
 var mongoose   = require('./mongoose');
 var HttpError  = require('../http/error');
+var queries    = require('./queries');
+var AllowAll   = require('./authorization/allow-all');
 
 exports.Schema  = mongoose.Schema;
 exports.types   = mongoose.Schema.Types;
@@ -36,7 +38,7 @@ exports.require = function(model) {
 					enumerable: true,
 					configurable: false,
 					writeable: false,
-					value: exports.create(name, cached.schema)
+					value: exports.create(name, cached.schema, cached.auth)
 				});
 
 				return cached.model;
@@ -52,10 +54,14 @@ exports.require = function(model) {
 // 
 // @param {name} the model name
 // @param {schema} the schema as it has been defined so far
+// @param {auth} the authorization model to use
 // @return object
 // 
-exports.create = function(name, schema) {
-	/*
+exports.create = function(name, schema, auth) {
+	// If no authorization model is defined, default to allowing everything
+	auth = auth || new AllowAll();
+
+/*
 	// Mark the model as new if it is
 	schema.pre('save', function(done) {
 		this.wasNew = this.isNew;
@@ -102,7 +108,7 @@ exports.create = function(name, schema) {
 
 		redis.off([name, event].join(':'), callback);
 	};
-	*/
+*/
 
 // -------------------------------------------------------------
 
@@ -141,7 +147,7 @@ exports.create = function(name, schema) {
 					type = type.slice(9, type.indexOf('('));
 
 					if (isArray) {
-						type = '[' + type + ']'
+						type = '[' + type + ']';
 					}
 
 					desc.type = type;
@@ -230,13 +236,18 @@ exports.create = function(name, schema) {
 // -------------------------------------------------------------
 
 	// 
+	// Returns a method for creating basic crud functions for this model
 	// 
+	// @param {crudMethod} the crud method ("create", "read", "update", or "destroy")
+	// @param {idKey} the id key, used for detail endpoints
+	// @return function
 	// 
 	if (! schema.statics.crud) {
 		schema.statics.crud = function(crudMethod, idKey) {
 			switch (crudMethod) {
 				case 'create':
-					return crudCreate;
+					var preCreate = idKey;
+					return crudCreate(preCreate);
 				case 'read':
 					return idKey ? crudReadDetail(idKey) : crudReadList;
 				case 'update':
@@ -248,22 +259,92 @@ exports.create = function(name, schema) {
 	}
 
 	// 
+	// The crud read method for list endpoints, looks up and returns
+	// a list of documents for the model based on the given query
 	// 
+	// @param {req} the request object
+	// @return void
 	// 
 	function crudReadList(req) {
-		// 
+		var page = 1;
+		var docs = [ ];
+		var start = req.query.offset || 0;
+		var pageSize = req.query.limit || 10;
+
+		Promise
+			// Keep fetching docs until we have the amount requested
+			.while(needDocs)
+			.do(findChunk)
+			.then(function() {
+				var meta = {
+					limit: req.query.limit,
+					offset: req.query.offset
+				};
+
+				req.send(200, meta, docs.slice(0, pageSize).map(model.serialize));
+			})
+			.catch(
+				HttpError.catch(req)
+			);
+
+		function needDocs() {
+			return docs.length < pageSize;
+		}
+
+		function findChunk(_break) {
+			return model.findByQuery(req.query, paginate)
+				.then(function(objs) {
+					// If there are no more matches, stop querying
+					if (! objs || ! objs.length) {
+						return _break();
+					}
+
+					// Check for authorization on each document
+					return auth.readList(objs, req);
+				})
+				.then(function(authed) {
+					// Add only authorized docs to the list of results
+					docs.push.apply(docs, authed);
+				});
+		}
+
+		function paginate(query) {
+			query.offset(start + (pageSize * page++));
+		}
 	}
 
 	// 
+	// The crud read method for detail endpoints, looks up and returns
+	// a single document for the model
 	// 
+	// @param {idKey} the property name where the id can be found
+	// @return function
 	// 
 	function crudReadDetail(idKey) {
 		return function(req) {
+			var doc;
 			var id = req.params[idKey];
 
+			// Look up the requested document
 			model.findById(id).exec()
-				.then(function() {
-					// 
+				.then(function(obj) {
+					// Make sure we found something
+					if (! obj) {
+						throw new HttpError(404, 'Document not found');
+					}
+
+					doc = obj;
+
+					// Authorize the user to take this action
+					return auth.readDetail(doc, req);
+				})
+				.then(function(authorized) {
+					// If the user is not authorized, send back a 401
+					if (! authorized) {
+						throw new HttpError(401, 'Not authorized');
+					}
+
+					req.send(200, model.serialize(doc));
 				})
 				.catch(
 					HttpError.catch(req)
@@ -272,10 +353,32 @@ exports.create = function(name, schema) {
 	}
 
 	// 
+	// The crud create method, creates a new document for the model
 	// 
+	// @param {req} the request object
+	// @param {preCreate} a pre-creation validator/constructor function
+	// @return void
 	// 
-	function crudCreate(req) {
-		// 
+	function crudCreate(req, preCreate) {
+		preCreate = preCreate || function(obj) {
+			return obj;
+		};
+
+		auth.createDetail(req.body)
+			.then(function(authorized) {
+				if (! authorized) {
+					throw new HttpError(401, 'Not authorized');
+				}
+
+				return preCreate(req.body, req);
+			})
+			.then(model.create.bind(model))
+			.then(function(doc) {
+				req.send(201, model.serialize(doc));
+			})
+			.catch(
+				HttpError.catch(req)
+			);
 	}
 
 	// 

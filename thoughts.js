@@ -1,6 +1,5 @@
 
 var dagger   = require('dagger.js');
-var People   = require('./models/people');
 
 
 
@@ -43,12 +42,21 @@ var Person = dagger.models.require('person').model;
 dagger.endpoint('/people', {
 	'get':             Person.crud('read'),
 	'get /:id':        Person.crud('read', 'id'),
-	'post':            Person.crud('create'),
+	'post':            Person.crud('create', preCreate),
 	'put|patch':       Person.crud('update'),
 	'put|patch /:id':  Person.crud('update', 'id'),
 	'delete':          Person.crud('delete'),
 	'delete /:id':     Person.crud('delete', 'id')
 });
+
+function preCreate(obj, req) {
+	if (! obj.requiredThing) {
+		throw new dagger.HttpError(400, 'requiredThing is required');
+	}
+
+	obj.owner = req.user._id;
+	return obj;
+}
 
 
 

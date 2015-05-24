@@ -8,35 +8,35 @@ var Authorization  = require('./index');
 // 
 var AllowAllAuthorization = module.exports = Class.extend(Authorization, {
 	
-	readList: function(objs, req) {
+	readList: function(objs) {
 		return Promise.resolve(objs);
 	},
 
-	readDetail: function(obj, req) {
+	readDetail: function() {
 		return Promise.resolve(true);
 	},
 
-	createList: function(objs, req) {
+	createList: function(objs) {
 		return Promise.resolve(objs);
 	},
 
-	createDetail: function(obj, req) {
+	createDetail: function() {
 		return Promise.resolve(true);
 	},
 
-	updateList: function(objs, req) {
+	updateList: function(objs) {
 		return Promise.resolve(objs);
 	},
 
-	updateDetail: function(obj, req) {
+	updateDetail: function() {
 		return Promise.resolve(true);
 	},
 
-	deleteList: function(objs, req) {
+	deleteList: function(objs) {
 		return Promise.resolve(objs);
 	},
 
-	deleteDetail: function(obj, req) {
+	deleteDetail: function() {
 		return Promise.resolve(true);
 	}
 

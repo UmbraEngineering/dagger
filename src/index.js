@@ -1,4 +1,9 @@
 
+// Load in the needed promise extensions
+require('promise-extensions')
+	.init(require('promise-es6').Promise)
+	.install('while');
+
 // 
 // The method which creates and starts up the app server
 // 
@@ -10,7 +15,9 @@
 // @return object
 // 
 exports = module.exports = function(options) {
-	return exports.app = new App(options);
+	exports.app = new App(options);
+	exports.app.setup();
+	return exports.app;
 };
 
 // 
@@ -18,6 +25,21 @@ exports = module.exports = function(options) {
 // 
 var App       = require('./app');
 var Endpoint  = require('./endpoint');
+var winston   = require('winston');
+var config    = require('./config');
+
+// 
+// Expose and configure the logger
+// 
+var loggerConf = config.logging || { enabled: true };
+exports.logger = winston;
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {
+	silent: ! loggerConf.enabled,
+	colorize: loggerConf.colors,
+	level: loggerConf.level,
+	timestamp: loggerConf.timestamp
+});
 
 // 
 // Expose the endpoint class/method
@@ -28,6 +50,11 @@ exports.endpoint = function(baseUrl, routes) {
 };
 
 // 
+// Expose HttpError
+// 
+exports.HttpError = require('./http/error');
+
+// 
 // Expose the base authorization schemes
 // 
 exports.auth = {
@@ -35,8 +62,3 @@ exports.auth = {
 	AllowAllAuthorization: require('./model/authorization/allow-all'),
 	DenyAllAuthorization: require('./model/authorization/deny-all')
 };
-
-
-
-
-
