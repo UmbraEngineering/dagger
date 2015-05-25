@@ -42,6 +42,11 @@ var Endpoint = module.exports = Class.extend({
 			func = route; route = '';
 		}
 
+		// If there are double slashes, remove one to avoid routing failures
+		if (this.baseUrl[this.baseUrl.length - 1] === '/' && route[0] === '/') {
+			route = route.slice(1);
+		}
+
 		router.push(methods, this.baseUrl + route, func);
 	},
 

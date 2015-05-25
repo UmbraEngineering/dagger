@@ -6,6 +6,7 @@ var mongoose   = require('./mongoose');
 var HttpError  = require('../http/error');
 var queries    = require('./queries');
 var AllowAll   = require('./authorization/allow-all');
+var Promise    = require('promise-es6').Promise;
 
 exports.Schema  = mongoose.Schema;
 exports.types   = mongoose.Schema.Types;
@@ -239,21 +240,21 @@ exports.create = function(name, schema, auth) {
 	// Returns a method for creating basic crud functions for this model
 	// 
 	// @param {crudMethod} the crud method ("create", "read", "update", or "destroy")
-	// @param {idKey} the id key, used for detail endpoints
+	// @param {opts} options for things such as idKeys, and update methods
 	// @return function
 	// 
 	if (! schema.statics.crud) {
-		schema.statics.crud = function(crudMethod, idKey) {
+		schema.statics.crud = function(crudMethod, opts) {
+			opts = opts || { };
 			switch (crudMethod) {
 				case 'create':
-					var preCreate = idKey;
-					return crudCreate(preCreate);
+					return crudCreate(opts.preCreate);
 				case 'read':
-					return idKey ? crudReadDetail(idKey) : crudReadList;
+					return opts.idKey ? crudReadDetail(opts.idKey) : crudReadList;
 				case 'update':
-					return idKey ? crudUpdateDetail(idKey) : crudUpdateList;
+					return crudUpdate(opts);
 				case 'delete':
-					return idKey ? crudDeleteDetail(idKey) : crudDeleteList;
+					return opts.idKey ? crudDeleteDetail(opts.idKey) : crudDeleteList;
 			}
 		};
 	}
@@ -266,7 +267,7 @@ exports.create = function(name, schema, auth) {
 	// @return void
 	// 
 	function crudReadList(req) {
-		var page = 1;
+		var page = 0;
 		var docs = [ ];
 		var start = req.query.offset || 0;
 		var pageSize = req.query.limit || 10;
@@ -276,12 +277,15 @@ exports.create = function(name, schema, auth) {
 			.while(needDocs)
 			.do(findChunk)
 			.then(function() {
+				docs = docs.slice(0, pageSize);
+
 				var meta = {
-					limit: req.query.limit,
-					offset: req.query.offset
+					limit: req.query.limit || 10,
+					offset: req.query.offset || 0,
+					count: docs.length
 				};
 
-				req.send(200, meta, docs.slice(0, pageSize).map(model.serialize));
+				req.send(200, meta, docs.map(model.serialize));
 			})
 			.catch(
 				HttpError.catch(req)
@@ -309,7 +313,7 @@ exports.create = function(name, schema, auth) {
 		}
 
 		function paginate(query) {
-			query.offset(start + (pageSize * page++));
+			query.skip(start + (pageSize * page++));
 		}
 	}
 
@@ -321,12 +325,18 @@ exports.create = function(name, schema, auth) {
 	// @return function
 	// 
 	function crudReadDetail(idKey) {
+		// 
+		// @param {req} the request object
+		// @return void
+		// 
 		return function(req) {
 			var doc;
 			var id = req.params[idKey];
 
 			// Look up the requested document
-			model.findById(id).exec()
+			model.findById(id)
+				.lean()
+				.exec()
 				.then(function(obj) {
 					// Make sure we found something
 					if (! obj) {
@@ -355,59 +365,136 @@ exports.create = function(name, schema, auth) {
 	// 
 	// The crud create method, creates a new document for the model
 	// 
-	// @param {req} the request object
 	// @param {preCreate} a pre-creation validator/constructor function
-	// @return void
+	// @return function
 	// 
-	function crudCreate(req, preCreate) {
-		preCreate = preCreate || function(obj) {
-			return obj;
+	function crudCreate(preCreate) {
+		// 
+		// @param {req} the request object
+		// @return void
+		// 
+		return function(req) {
+			preCreate = preCreate || function(obj) {
+				return obj;
+			};
+
+			auth.createDetail(req.body)
+				.then(function(authorized) {
+					if (! authorized) {
+						throw new HttpError(401, 'Not authorized');
+					}
+
+					return preCreate(req.body, req);
+				})
+				.then(model.create.bind(model))
+				.then(function(doc) {
+					req.send(201, model.serialize(doc));
+				})
+				.catch(
+					HttpError.catch(req)
+				);
 		};
-
-		auth.createDetail(req.body)
-			.then(function(authorized) {
-				if (! authorized) {
-					throw new HttpError(401, 'Not authorized');
-				}
-
-				return preCreate(req.body, req);
-			})
-			.then(model.create.bind(model))
-			.then(function(doc) {
-				req.send(201, model.serialize(doc));
-			})
-			.catch(
-				HttpError.catch(req)
-			);
 	}
 
 	// 
+	// Chooses the appropriate update method for a crud update call
 	// 
+	// @param {opts} an opts object with idKey (optional) and method
+	// @return function
 	// 
-	function crudUpdateList(req) {
+	function crudUpdate(opts) {
+		opts.method = opts.method || 'patch';
+
+		if (opts.method === 'replace') {
+			return opts.idKey ? crudUpdateDetailReplace(opts.idKey) : crudUpdateListReplace;
+		}
+
+		else if (opts.method === 'patch') {
+			return opts.idKey ? crudUpdateDetailPatch(opts.idKey) : crudUpdateListPatch;
+		}
+
+		else {
+			throw new Error('Invalid value for update method; Must be "replace" or "patch".');
+		}
+	}
+
+	// 
+	// Crud update method, replaces the given documents in the database completely
+	// with the given versions; a PUT operation
+	// 
+	// @param {req} the request object
+	// @return void
+	// 
+	function crudUpdateListReplace(req) {
 		// 
 	}
 
 	// 
+	// Crud update method, replace the given document in the database completely
+	// with the given version; a PUT operation
 	// 
+	// @param {idKey} the property name where the id can be found
+	// @return function
 	// 
-	function crudUpdateDetail(idKey) {
+	function crudUpdateDetailReplace(idKey) {
+		// 
+		// @param {req} the request object
+		// @return void
+		// 
 		return function(req) {
 			// 
 		};
 	}
 
 	// 
+	// Crud update method, updates the given documents with the attributes in the
+	// given versions; a PATCH operation
 	// 
+	// @param {req} the request object
+	// @return void
+	// 
+	function crudUpdateListPatch(req) {
+		// 
+	}
+
+	// 
+	// Crud update method, updates the given document with the attributes in the
+	// given version; a PATCH operation
+	// 
+	// @param {idKey} the property name where the id can be found
+	// @return function
+	// 
+	function crudUpdateDetailPatch(idKey) {
+		// 
+		// @param {req} the request object
+		// @return void
+		// 
+		return function(req) {
+			// 
+		};
+	}
+
+	// 
+	// The crud delete list method, deletes the given documents from the database
+	// 
+	// @param {req} the request object
+	// @return void
 	// 
 	function crudDeleteList(req) {
 		// 
 	}
 
 	// 
+	// The crud delete detail method, deletes the given document from the database
 	// 
+	// @param {idKey} the property name where the id can be found
+	// @return function
 	// 
 	function crudDeleteDetail(idKey) {
+		// 
+		// @param {req} the request object
+		// @return void
+		// 
 		return function(req) {
 			// 
 		};

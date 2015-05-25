@@ -42,6 +42,11 @@ winston.add(winston.transports.Console, {
 });
 
 // 
+// Expose the models namespace
+// 
+exports.models = require('./models');
+
+// 
 // Expose the endpoint class/method
 // 
 exports.Endpoint = Endpoint;
@@ -58,7 +63,7 @@ exports.HttpError = require('./http/error');
 // Expose the base authorization schemes
 // 
 exports.auth = {
-	Authorization: require('./model/authorization'),
-	AllowAllAuthorization: require('./model/authorization/allow-all'),
-	DenyAllAuthorization: require('./model/authorization/deny-all')
+	Authorization: require('./models/authorization'),
+	AllowAllAuthorization: require('./models/authorization/allow-all'),
+	DenyAllAuthorization: require('./models/authorization/deny-all')
 };

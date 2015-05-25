@@ -2,6 +2,7 @@
 var url       = require('url');
 var Request   = require('./index');
 var dagger    = require('../index');
+var conf      = require('../config');
 var httpMeta  = require('../http/meta');
 var qs        = require('querystring');
 var merge     = require('merge-recursive');
@@ -61,7 +62,7 @@ var HttpRequest = module.exports = Request.extend({
 			body: body
 		};
 
-		res.status = status;
+		res.statusCode = status;
 		res.setHeader('Content-Type', 'application/json');
 		res.write(JSON.stringify(result));
 		res.end();

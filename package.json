@@ -15,7 +15,7 @@
     "mongoose": "4.0.x",
     "node-conf": "0.0.x",
     "promise-es6": "0.1.x",
-    "promise-extensions": "0.2.x",
+    "promise-extensions": "^0.2.1",
     "redis": "0.10.x",
     "require-dir": "0.3.x",
     "route-parser": "0.0.x",
