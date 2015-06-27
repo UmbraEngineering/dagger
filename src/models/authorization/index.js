@@ -73,7 +73,7 @@ var Authorization = module.exports = Class.extend({
 	// @return promise
 	// 
 	updateList: function(objs, req) {
-		throw new Error('Authoriaztion::updateist must be overriden');
+		throw new Error('Authoriaztion::updateList must be overriden');
 	},
 	
 	// 

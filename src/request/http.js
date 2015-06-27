@@ -36,7 +36,7 @@ var HttpRequest = module.exports = Request.extend({
 	// @return void
 	// 
 	setHeader: function(header, value) {
-		return this.res.setHeader(header, value);
+		return this._res.setHeader(header, value);
 	},
 
 	// 

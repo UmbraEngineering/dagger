@@ -12,9 +12,13 @@ exports.buildQuery = function(model, opts) {
 	// Build the actual database query
 	var query = model
 		.find()
-		.lean()
 		.skip(opts.offset)
 		.limit(opts.limit);
+
+	// Query for lean objects if requested
+	if (opts.lean) {
+		query.lean();
+	}
 
 	// Handle selecting fields
 	if (opts.fields) {

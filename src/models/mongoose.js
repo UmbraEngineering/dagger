@@ -1,10 +1,21 @@
 
+var url       = require('url');
 var conf      = require('../config');
 var winston   = require('winston');
 var mongoose  = module.exports = require('mongoose');
 
 // Open a new connection
 mongoose.connect(conf.mongodb.url);
+
+mongoose.connection.once('open', function() {
+	var parsed = url.parse(conf.mongodb.url);
+	winston.info('Connected to database at mongodb://' + parsed.host + parsed.pathname);
+});
+
+mongoose.connection.on('error', function(err) {
+	winston.error('Failed to connect to mongodb');
+	winston.error(err);
+});
 
 // Add support for #catch on mongoose promises
 // See: https://github.com/aheckmann/mpromise/pull/14#issuecomment-68448406
