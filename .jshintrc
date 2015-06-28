@@ -48,7 +48,7 @@
     "validthis"     : false,     // true: Tolerate using this in a non-constructor function
 
     // Environments
-    "jasmine"       : false,    // Jasmine
+    "jasmine"       : true,     // Jasmine
     "node"          : true,     // Node.js
     "nonstandard"   : false,    // Widely adopted globals (escape, unescape, etc)
     "phantom"       : false,    // PhantomJS

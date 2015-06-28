@@ -14,11 +14,12 @@ var merge = require('merge-recursive');
 var initializing = false;
 
 /*jshint ignore:start */
+/*globals fnTest */
 var fnTest = /xyz/.test(function() { xyz; }) ? /\b_super\b/ : /.*/;
 /*jshint ignore:end */
 
 // The base Class implementation (does nothing)
-var Class = module.exports = function(){};
+var Class = module.exports = function() { };
 
 // Here we allow setting of a callback to run whenever this model is extended
 Class.onExtend = null;
@@ -52,11 +53,11 @@ Class.extend = function(prop) {
 	initializing = false;
  
 	// Copy the properties over onto the new prototype
-	for (var name in prop) {
+	Object.keys(prop).forEach(function(name) {
 		// Check if we're overwriting an existing function
-		prototype[name] = typeof prop[name] == "function" &&
-			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-			(function(name, fn){
+		prototype[name] = typeof prop[name] === 'function' &&
+			typeof _super[name] === 'function' && fnTest.test(prop[name]) ?
+			(function(name, fn) {
 				return function() {
 					var tmp = this._super;
 
@@ -73,7 +74,7 @@ Class.extend = function(prop) {
 				};
 			})(name, prop[name]) :
 			prop[name];
-	}
+	});
  
 	// The dummy class constructor
 	function Class() {
