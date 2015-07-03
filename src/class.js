@@ -1,12 +1,12 @@
 
 // 
-// Simple JavaScript Inheritance
+// Based on Simple JavaScript Inheritance
 // By John Resig http://ejohn.org/
 // MIT Licensed.
 // 
 // Inspired by base2 and Prototype
 // 
-// Modified for use in Dagger by James Brumond
+// Modified for use in Dagger
 // 
 
 var merge = require('merge-recursive');
@@ -15,6 +15,9 @@ var initializing = false;
 
 /*jshint ignore:start */
 /*globals fnTest */
+// This is used to determine if the function contains references to _super
+// if the current environment supports stringifying function contents, or
+// just always return true if not
 var fnTest = /xyz/.test(function() { xyz; }) ? /\b_super\b/ : /.*/;
 /*jshint ignore:end */
 
@@ -35,15 +38,19 @@ Class.create = function(param) {
 };
 
 // Create a new Class that inherits from this class
-Class.extend = function(prop) {
+Class.extend = function extend(prop) {
 	var _super = this.prototype;
 
 	if (arguments.length > 1) {
-		var args = Array.prototype.slice.call(arguments).map(function(mixin) {
+		var args = toArray(arguments).map(function(mixin) {
 			return (typeof mixin === 'function') ? mixin.prototype : mixin;
 		});
 		args.unshift({ });
 		prop = merge.apply(null, args);
+	}
+
+	if (typeof prop === 'function') {
+		prop = merge({ }, prop.prototype);
 	}
  
 	// Instantiate a base class (but only create the instance,
@@ -97,7 +104,7 @@ Class.extend = function(prop) {
 	Class._super = _super;
 
 	// And make this class extendable
-	Class.extend = arguments.callee;
+	Class.extend = extend;
 
 	// Add the create method to this class
 	Class.create = this.create;
@@ -120,3 +127,17 @@ Class.extend = function(prop) {
  
 	return Class;
 };
+
+// 
+// Converts an arguments object into a true array
+// 
+// @param {args} the enumerable to convert
+// @return array
+// 
+function toArray(args) {
+	var result = [ ];
+	for (var i = 0; i < args.length; i++) {
+		result.push(args[i]);
+	}
+	return result;
+}
